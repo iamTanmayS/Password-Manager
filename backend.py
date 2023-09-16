@@ -9,8 +9,12 @@ class passwordmanagerbackend(passwordmanagerui):
     
     def file_entry(self):
         password_data= open("Password_data.txt","a")
-        self.password_format = "\n {} | {}  | {} \n ".format(self.email,self.website,self.password)
-        password_data.writelines(self.password_format)
+        self.password_format = "{} | {}  | {} \n ".format(self.email,self.website,self.password)
+        is_true = messagebox.askokcancel(title = "Confirm",message="Are you sure you want to save this \n website : {} \n password : {}\n email : {} ".format(self.website,self.password,self.email))
+        if is_true == True:
+            password_data.writelines(self.password_format)
+            self.password_entry.delete(0,END)
+            self.website_entry.delete(0,END)
         
     def save_data(self):
         self.website = self.website_entry.get()
@@ -34,5 +38,4 @@ class passwordmanagerbackend(passwordmanagerui):
     def generate_password(self):
         self.pass_boolean = True
         self.password_generator()
-        self.pass_boolean = False    
 b = passwordmanagerbackend()
