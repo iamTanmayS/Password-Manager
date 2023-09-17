@@ -1,5 +1,6 @@
 from Password_manager import *
 from random import*
+from json import *
   
 class passwordmanagerbackend(passwordmanagerui):
     def __init__(self):
@@ -8,18 +9,27 @@ class passwordmanagerbackend(passwordmanagerui):
         
     
     def file_entry(self):
-        password_data= open("Password_data.txt","a")
-        self.password_format = "{} | {}  | {} \n ".format(self.email,self.website,self.password)
+        self.new_data = {self.website:{
+            "email": self.email,
+            "password":self.password
+        }}
+        
         is_true = messagebox.askokcancel(title = "Confirm",message="Are you sure you want to save this \n website : {} \n password : {}\n email : {} ".format(self.website,self.password,self.email))
         if is_true == True:
-            password_data.writelines(self.password_format)
-            self.password_entry.delete(0,END)
-            self.website_entry.delete(0,END)
+                with open("Password_data.json","r") as password_data :
+                    password_dict =  load(password_data)
+                    password_dict.update(self.new_data)
+                    print(type(password_dict))
+                    with open ("Password_data.json","w") as password_data2:
+                        dump(password_dict,password_data2,indent=4)
+                        self.password_entry.delete(0,END)
+                        self.website_entry.delete(0,END)
         
     def save_data(self):
         self.website = self.website_entry.get()
         self.email=self.email_entry.get()
         self.password = self.password_entry.get()
+        
         self.file_entry()
         
     def save_work(self):
@@ -38,4 +48,20 @@ class passwordmanagerbackend(passwordmanagerui):
     def generate_password(self):
         self.pass_boolean = True
         self.password_generator()
+        self.pass_boolean = False
+    
+    def retrieve_details(self):
+        with open("password_data.json","r") as data_in_dict : 
+            a = load(data_in_dict)
+            for i in a :
+                if i == self.website_entry.get():
+                    messagebox.showinfo(i,f'''email: {a[i]['email']} 
+password : {a[i]['password']}''')
+                else:
+                    messagebox.showinfo("Not Found","Details Not Found")
+    def retrieve_choice(self):
+        self.retrieve_boolean = True
+        self.retrieve_details()
+        self.retrieve_boolean = False            
+                    
 b = passwordmanagerbackend()
